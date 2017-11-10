@@ -1,0 +1,4 @@
+[submodule "cropperjs"]
+	path = cropperjs
+	url = git@github.com:fengyuanchen/cropperjs.git
+	branch = master
