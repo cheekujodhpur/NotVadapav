@@ -17,22 +17,40 @@
         </style>
         <script>
             var cropper;
+            function cropperInit(elem){
+                imgData = elem.getImageData();
+                elem.setData({"width":imgData.width,"height":imgData.height});
+                console.log(imgData);
+            }
             function loadCropper(elem){
                 var image = elem;
                 cropper = new Cropper(image, {
                   viewMode: 1,
-                  zoomOnWheel: false
+                  scalable: false,
+                  zoomable: false,
+                  cropBoxResizable: false,
+                  ready: function(){
+                      var imgData = this.cropper.getImageData();
+                      var fsize = Math.min(imgData.naturalWidth, imgData.naturalHeight);
+                      this.cropper.setData({"width":fsize,"height":fsize});
+                      console.log(this.cropper.getData());
+                  } 
                 });
             }
         </script>
     </head>
     <body>
         <div id="imageContainer">
-            <img onload="loadCropper(this)" id="image" src="images/image_0.jpg">
+            <img onload="loadCropper(this)" id="image" src="images/image_2.jpg">
         </div>
         <script>
-            document.addEventListener('keypress',function(){
-                console.log(cropper.setData({"width":512,"height":512}));
+            document.addEventListener('keypress',function(e){
+                switch(e.keyCode){
+                    case 39: cropper.move(-10,0);break;
+                    case 37: cropper.move(10,0);break;
+                    case 38: cropper.move(0,10);break;
+                    case 40: cropper.move(0,-10);break;
+                }
             });
         </script>
     </body>
