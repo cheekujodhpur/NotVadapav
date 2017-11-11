@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link href = "cropperjs/dist/cropper.css" rel="stylesheet">
+        <script src="cropperjs/dist/cropper.js"></script>
+        <style type="text/css">
+            div#imageContainer{
+                max-width:1000px;
+                max-height:512px;
+                height:512px;
+                margin:20px auto;
+            }
+            img#image{
+                max-width: 100%;
+            }
+        </style>
+        <script>
+            var cropper;
+            function loadCropper(elem){
+                var image = elem;
+                cropper = new Cropper(image, {
+                  viewMode: 1,
+                  zoomOnWheel: false
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <div id="imageContainer">
+            <img onload="loadCropper(this)" id="image" src="images/image_0.jpg">
+        </div>
+        <script>
+            document.addEventListener('keypress',function(){
+                console.log(cropper.setData({"width":512,"height":512}));
+            });
+        </script>
+    </body>
+</html>
