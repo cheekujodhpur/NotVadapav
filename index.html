@@ -4,8 +4,7 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <link href = "cropperjs/dist/cropper.css" rel="stylesheet">
         <script src="cropperjs/dist/cropper.js"></script>
-        <style type="text/css">
-            div#imageContainer{
+        <style type="text/css"> div#imageContainer{
                 max-width:1000px;
                 max-height:512px;
                 height:512px;
@@ -17,6 +16,7 @@
         </style>
         <script>
             var cropper;
+            var current_index = 0;
             function cropperInit(elem){
                 imgData = elem.getImageData();
                 elem.setData({"width":imgData.width,"height":imgData.height});
@@ -33,7 +33,6 @@
                       var imgData = this.cropper.getImageData();
                       var fsize = Math.min(imgData.naturalWidth, imgData.naturalHeight);
                       this.cropper.setData({"width":fsize,"height":fsize});
-                      console.log(this.cropper.getData());
                   } 
                 });
             }
@@ -41,15 +40,52 @@
     </head>
     <body>
         <div id="imageContainer">
-            <img onload="loadCropper(this)" id="image" src="images/image_2.jpg">
+            <img onload="loadCropper(this)" id="image" src="images/image_0.png">
         </div>
         <script>
-            document.addEventListener('keypress',function(e){
+            var saveData = (function () {
+                var a = document.createElement("a");
+                document.body.appendChild(a);
+                a.style = "display: none";
+                return function (blob, fileName) {
+                    url = window.URL.createObjectURL(blob);
+                    a.href = url;
+                    a.download = fileName;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    cropper.destroy();
+                    current_index = current_index+1;
+                    document.getElementById("image").src="images/image_"+current_index+".png";
+                };
+            }());
+            document.addEventListener('keydown',function(e){
                 switch(e.keyCode){
                     case 39: cropper.move(-10,0);break;
                     case 37: cropper.move(10,0);break;
                     case 38: cropper.move(0,10);break;
                     case 40: cropper.move(0,-10);break;
+
+                    // r: Reject
+                    case 82: cropper.destroy();
+                             current_index = current_index+1;
+                             document.getElementById("image").src="images/image_"+current_index+".png";
+                             break;
+
+                    // q: Vadapav
+                    case 81: cropper.getCroppedCanvas().toBlob(function (blob){
+                                saveData(blob, "v_"+current_index+".png");
+                             });
+                             break;
+                    // w: Not Vadapav
+                    case 87: cropper.getCroppedCanvas().toBlob(function (blob){
+                                saveData(blob, "nv_"+current_index+".png");
+                             });
+                             break;
+                    // e: Burger, or very similar to Vadapav 
+                    case 69: cropper.getCroppedCanvas().toBlob(function (blob){
+                                saveData(blob, "b_"+current_index+".png");
+                             });
+                             break;
                 }
             });
         </script>
